@@ -1,92 +1,91 @@
-# sqld - Dynamic SQL Query Builder
+# SQLD For Dynamic SQL
 
-`sqld` is a lightweight Go package that enables dynamic SQL query generation from JSON requests. It simplifies building flexible database queries where the fields and filters are not known at compile time.
+`sqld` is a package that enables dynamic SQL query generation and execution from JSON requests. It provides two distinct subsystems for handling different query needs:
 
-## Overview
+1. **Structured Query System**: A high-level, type-safe abstraction for building queries using Go generics
+2. **Safe Raw Query System**: A flexible system for writing raw SQL with safety guarantees
 
-Modern APIs often need to be flexible in how they return data, allowing clients to:
-- Request specific fields
-- Apply dynamic filters
-- Control data shape
+## Key Features
 
-`sqld` addresses these needs by providing a simple JSON interface that maps to SQL queries.
+### Structured Query System
+- Type-safe query building with Go generics
+- Dynamic field selection and filtering
+- Built-in pagination and ordering
+- Automatic parameter binding
 
-## Core Features
+### Safe Raw Query System
+- Raw SQL with named parameters
+- Runtime type validation
+- Safe parameter substitution
+- Flexible query construction
 
-### Dynamic Field Selection
-Clients can specify which fields they want to retrieve:
+## Usage
 
-```json
-{
-	"select": ["id", "name", "email"],
-	"from": "users"
+### Structured Query System
+```go
+// Register your model
+if err := sqld.Register(Employee{}); err != nil {
+    log.Fatal(err)
 }
+
+// Execute a structured query
+resp, err := sqld.Execute[Employee](ctx, db, sqld.QueryRequest{
+    Select: []string{"id", "name", "email"},
+    Where: map[string]interface{}{
+        "is_active": true,
+    },
+})
 ```
 
-
-
-### Dynamic Filtering
-Apply filters using a simple key-value structure:
-
-```json
-{
-    "select": ["id", "name"],
-    "from": "users",
-    "where": {
-        "status": "active",
-    "role": "admin"
-    }
-}
+### Safe Raw Query System
+```go
+// Execute a raw query with named parameters
+query := `
+    SELECT id, name, email 
+    FROM employees 
+    WHERE department = {{dept}}
+`
+results, err := sqld.ExecuteRaw[EmployeeParams, Employee](
+    ctx, 
+    db, 
+    query,
+    map[string]interface{}{"dept": "Engineering"},
+)
 ```
 
+For more examples, check the `examples/` directory.
 
-## Design Philosophy
+## Architecture
 
-- **Simplicity First**: Start with basic operations and grow based on needs
-- **Security Focused**: Built-in validation and sanitization
-- **Type Safety**: Leverages Go's type system for reliable query building
-- **Extensible**: Designed to grow with additional features
-- **Performance**: Efficient query generation using [Squirrel](https://github.com/Masterminds/squirrel)
+SQLD follows a clean design with components supporting both query systems:
 
-## Use Cases
+### Core Components
+1. Query Building
+   - Structured query generation
+   - Raw query processing
+   - Type-safe parameter handling
 
-- REST APIs with flexible response fields
-- GraphQL-like query capabilities without GraphQL complexity
-- Admin interfaces with dynamic data requirements
-- Report generators with configurable outputs
+2. Type System
+   - Model metadata management
+   - Custom type scanning
+   - Null value handling
 
-## Current Limitations
+3. Execution
+   - Query execution
+   - Result mapping
+   - Error handling
 
-- Supports only equality comparisons in WHERE clause
-- Single table queries only
-- No support for JOINs yet
-- No aggregations or GROUP BY
-- No sorting or pagination
+## Features
+- Type-safe query building
+- Automatic handling of null values
+- Support for complex WHERE clauses
+- ORDER BY support
+- Custom type scanners
+- Pagination support
+- Named parameter support
+- SQL injection prevention
 
-## Roadmap
-
-Future versions may include:
-- Additional comparison operators (>, <, LIKE, etc.)
-- Multi-table JOIN support
-- ORDER BY and GROUP BY
-- Pagination
-- Field and table aliases
-- Complex WHERE conditions (AND, OR combinations)
-- Aggregation functions
-- Query optimization hints
-
-## Dependencies
-
-- [Squirrel](https://github.com/Masterminds/squirrel) for SQL query building
-
-## Contributing
-
-This package is designed to grow based on real-world usage patterns. Contributions are welcome, especially in the following areas:
-- Additional operators
-- Performance improvements
-- Security enhancements
-- Documentation
-- Test cases
-
-## License
-
+## Documentation
+Detailed documentation is available in the `doc/` directory:
+- [Architecture Overview](doc/architecture.md)
+- [Query Building Guide](doc/query-building.md)

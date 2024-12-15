@@ -1,0 +1,53 @@
+{
+  "info": {
+    "_postman_id": "c8f23e9d-5b4c-4f3a-8e3c-9f9e9d8b4f5b",
+    "name": "SQLD Raw Queries Test Examples",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Raw Query - High Balance Accounts",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/rawquery-join",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "rawquery-join"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Simple Query - Employees by Department and Salary",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"department\": \"Engineering\",\n  \"min_salary\": 75000.00\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/rawquery-simple",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "rawquery-simple"]
+        },
+        "description": "Lists employees in a specific department with salary above the specified minimum, ordered by salary in descending order"
+      }
+    }
+  ]
+}
