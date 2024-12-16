@@ -11,8 +11,8 @@ import (
 	"reflect"
 	"time"
 
-	"sqld"
-	"sqld/examples/db/sqlc-gen"
+	"github.com/remiges-sachin/sqld"
+	"github.com/remiges-sachin/sqld/examples/db/sqlc-gen"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"

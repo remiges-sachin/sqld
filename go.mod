@@ -1,4 +1,4 @@
-module sqld
+module github.com/remiges-sachin/sqld
 
 go 1.22
 
